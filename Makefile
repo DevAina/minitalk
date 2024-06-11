@@ -1,57 +1,62 @@
+NAME = minitalk
+
 NAME_CLIENT = client
 
 NAME_SERVER = server
 
-LIBFTPRINTF = ./ft_printf/libftprintf.a
+LIBFTPRINTF = ./ft_printf/libftprint.a
 
 SRC_CLIENT = ./srcs/client.c
 
+SRC_CLIENT_BONUS = ./bonus/client_bonus.c
+
+SRC_SERVER_BONUS = ./bonus/server_bonus.c
+
 SRC_SERVER = ./srcs/server.c
-
-SRC_BONUS_CLIENT = ./bonus/client_bonus.c
-
-SRC_BONUS_SERVER = ./bonus/server_bonus.c
-
-FLAGS = -Wall -Werror -Wextra
-
-CC = cc
 
 OBJ_CLIENT = ${SRC_CLIENT:.c=.o}
 
-OBJ_BONUS_CLIENT = ${SRC_BONUS_CLIENT:.c=.o}
+OBJ_CLIENT_BONUS = ${SRC_CLIENT_BONUS:.c=.o}
+
+OBJ_SERVER_BONUS = ${SRC_SERVER_BONUS:.c=.o}
 
 OBJ_SERVER = ${SRC_SERVER:.c=.o}
 
-OBJ_BONUS_SERVER = ${SRC_BONUS_SERVER:.c=.o}
+FLAGS = -Wall -Wextra -Werror
 
-all: ${LIBFTPRINTF} ${NAME_CLIENT} ${NAME_SERVER}
+CC = cc
 
-bonus: ${LIBFTPRINTF} ${NAME_CLIENT}_bonus ${NAME_SERVER}_bonus
+all: ${NAME}
+
+${NAME}: ${NAME_CLIENT} ${NAME_SERVER}
+
+bonus: ${NAME_CLIENT}_bonus ${NAME_SERVER}_bonus
 
 .c.o:
-	cc -Wall -Werror -Wextra -c $< -o ${<:.c=.o}
-
-${LIBFTPRINTF}:
-	make -C ft_printf
+	${CC} -g ${FLAGS} -c $< -o ${<:.c=.o}
 
 ${NAME_CLIENT}: ${OBJ_CLIENT}
-	${CC} ${FLAGS} -o client ${OBJ_CLIENT} -L./ft_printf -lftprintf
+	make -C ./ft_printf
+	${CC} ${FLAGS} -o ${NAME_CLIENT} ${OBJ_CLIENT} -L./ft_printf -lftprintf
 
 ${NAME_SERVER}: ${OBJ_SERVER}
-	${CC} ${FLAGS} -o server ${OBJ_SERVER} -L./ft_printf -lftprintf
+	make -C ./ft_printf
+	${CC} ${FLAGS} -o ${NAME_SERVER} ${OBJ_SERVER} -L./ft_printf -lftprintf
 
-${NAME_CLIENT}_bonus: ${OBJ_BONUS_CLIENT}
-	${CC} ${FLAGS} -o ${NAME_CLIENT} ${OBJ_BONUS_CLIENT} -L./ft_printf -lftprintf
+${NAME_CLIENT}_bonus: ${OBJ_CLIENT_BONUS}
+	make -C ./ft_printf
+	${CC} ${FLAGS} -o ${NAME_CLIENT} ${OBJ_CLIENT_BONUS} -L./ft_printf -lftprintf
 
-${NAME_SERVER}_bonus: ${OBJ_BONUS_SERVER}
-	${CC} ${FLAGS} -o ${NAME_SERVER} ${OBJ_BONUS_SERVER} -L./ft_printf -lftprintf
+${NAME_SERVER}_bonus: ${OBJ_SERVER_BONUS}
+	make -C ./ft_printf
+	${CC} ${FLAGS} -o ${NAME_SERVER} ${OBJ_SERVER_BONUS} -L./ft_printf -lftprintf
 
 clean:
-	make fclean -C ./ft_printf
-	rm -f ${OBJ_CLIENT} ${OBJ_SERVER} ${OBJ_BONUS_CLIENT} ${OBJ_BONUS_SERVER}
+	make clean -C ./ft_printf
+	rm -f ${OBJ_CLIENT} ${OBJ_SERVER} ${OBJ_CLIENT_BONUS} ${OBJ_SERVER_BONUS}
 
 fclean: clean
-	make clean -C ./ft_printf
+	make fclean -C ./ft_printf
 	rm -f ${NAME_CLIENT} ${NAME_SERVER}
 
 re: fclean all
